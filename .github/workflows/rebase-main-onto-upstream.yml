@@ -1,0 +1,71 @@
+name: Rebase main onto upstream-main (apply patches)
+
+on:
+  schedule:
+    - cron: "15 */6 * * *"   # 放在 upstream-main 同步之后（比如 0 */6）
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout downstream main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch upstream-main
+        run: |
+          git fetch origin upstream-main:upstream-main
+
+      - name: Create sync branch
+        run: |
+          ts=$(date -u +%Y%m%d-%H%M%S)
+          echo "SYNC_BRANCH=sync/rebase-${ts}" >> $GITHUB_ENV
+          git checkout -b "$SYNC_BRANCH"
+
+      - name: Rebase onto upstream-main
+        id: rebase
+        run: |
+          set -e
+          git rebase upstream-main
+
+      - name: Push sync branch
+        run: |
+          git push -u origin "$SYNC_BRANCH"
+
+      - name: Open PR back to main
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ env.SYNC_BRANCH }}
+          base: main
+          title: "chore(sync): rebase main onto upstream-main"
+          body: |
+            Automated rebase of downstream patches onto latest upstream-main.
+            - Source: upstream-main
+            - Target: main
+          labels: upstream-sync
+
+  on_failure:
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create issue on failure
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "Patch rebase failed (conflicts) - manual intervention needed",
+              body: "The scheduled rebase of `main` onto `upstream-main` failed due to conflicts. Please run rebase locally and push a fix.",
+              labels: ["upstream-sync", "conflict"]
+            })
