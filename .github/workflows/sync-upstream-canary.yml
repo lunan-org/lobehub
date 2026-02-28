@@ -13,6 +13,13 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+    
+      - name: Checkout target repo
+        uses: actions/checkout@v3
+        with:
+          ref:  upstream-canary
+          persist-credentials: false
+
       - name: Sync with upstream (canary)
         uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
         with:

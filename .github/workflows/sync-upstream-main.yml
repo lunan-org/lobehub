@@ -13,6 +13,12 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v3
+        with:
+          ref:  upstream-main
+          persist-credentials: false
+
       - name: Sync with upstream (main)
         uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
         with:
