@@ -7,7 +7,7 @@ import { htmlToMarkdown } from '../utils/htmlToMarkdown';
 const BASE_URL = process.env.BROWSERLESS_URL ?? 'https://chrome.browserless.io';
 // Allowed file types: html, css, js, json, xml, webmanifest, txt, md
 const REJECT_REQUEST_PATTERN =
-  '.*\\.(?!(html|css|js|json|xml|webmanifest|txt|md)(\\?|#|$))[\\w-]+(?:[\\?#].*)?$';
+  process.env.BROWSERLESS_REJECT_REQUEST_PATTERN ?? '.*\\.(?!(html|css|js|json|xml|webmanifest|txt|md)(\\?|#|$))[\\w-]+(?:[\\?#].*)?$';
 const BROWSERLESS_TOKEN = process.env.BROWSERLESS_TOKEN;
 
 const BROWSERLESS_BLOCK_ADS = process.env.BROWSERLESS_BLOCK_ADS === '1';
