@@ -314,7 +314,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: PR Build v${{ needs.version.outputs.version }}
-          tag_name: v${{ needs.version.outputs.version }}
+          tag_name: pr-${{ github.event.pull_request.number }}
+          #          tag_name: v${{ needs.version.outputs.version }} # 会产生大量 tag/Release 垃圾
           #          tag_name: pr-build-${{ github.event.pull_request.number }}-${{ github.sha }}
           body: ${{ steps.pr_release_body.outputs.result }}
           draft: false
