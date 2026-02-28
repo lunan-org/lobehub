@@ -1,0 +1,25 @@
+name: Upstream Sync (main -> upstream-main)
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # 每6小时一次
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync with upstream (main)
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+        with:
+          upstream_repository: lobehub/lobehub
+          upstream_branch: main
+          target_sync_branch: upstream-main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          create_issue: true
+          issue_title: "Upstream sync (main) failed"
+          issue_labels: "upstream-sync"
