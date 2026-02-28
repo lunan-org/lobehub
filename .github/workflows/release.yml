@@ -4,6 +4,7 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  packages: write
 
 on:
   push:
@@ -34,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -89,24 +90,33 @@ jobs:
             console.log('✅ Version OK:', actual);
           "
 
-      - name: Release
-        run: bun run release
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # Pass version to semantic-release
-          SEMANTIC_RELEASE_VERSION: ${{ steps.get-version.outputs.version }}
+      # - name: Release
+      #   run: bun run release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #     # Pass version to semantic-release
+      #     SEMANTIC_RELEASE_VERSION: ${{ steps.get-version.outputs.version }}
 
       - name: Workflow
         run: bun run workflow:readme
 
-      - name: Commit changes
-        run: |-
-          git diff
-          git config --global user.name "lobehubbot"
-          git config --global user.email "i@lobehub.com"
-          git add .
-          git commit -m "📝 docs(bot): Auto sync agents & plugin to readme" || exit 0
-          git push
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      # - name: Commit changes
+      #   run: |-
+      #     git diff
+      #     git config --global user.name "lobehubbot"
+      #     git config --global user.email "i@lobehub.com"
+      #     git add .
+      #     git commit -m "📝 docs(bot): Auto sync agents & plugin to readme" || exit 0
+      #     git push
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload generated docs as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: generated-readme
+          path: |
+            README.md
+            docs/**/*
+          retention-days: 7
