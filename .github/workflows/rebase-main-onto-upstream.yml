@@ -27,6 +27,7 @@ jobs:
       - name: Create sync branch
         run: |
           ts=$(date -u +%Y%m%d-%H%M%S)
+          SYNC_BRANCH="sync/rebase-${ts}"
           echo "SYNC_BRANCH=sync/rebase-${ts}" >> $GITHUB_ENV
           git checkout -b "$SYNC_BRANCH"
 
@@ -38,7 +39,7 @@ jobs:
 
       - name: Push sync branch
         run: |
-          git push -u origin "$SYNC_BRANCH"
+          git push -u origin "${{ env.SYNC_BRANCH }}"
 
       - name: Open PR back to main
         uses: peter-evans/create-pull-request@v6
