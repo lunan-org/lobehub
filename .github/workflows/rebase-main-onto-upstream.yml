@@ -24,27 +24,49 @@ jobs:
         run: |
           git fetch origin upstream-main:upstream-main
 
-      - name: Create sync branch
+      - name: Check if upstream-main is already included in main
+        id: check
         run: |
+          set -e
+          # If upstream-main is an ancestor of main, main already contains latest upstream.
+          if git merge-base --is-ancestor upstream-main main; then
+            echo "✅ main already contains upstream-main (no upstream update to apply). Skipping."
+            echo "skipped=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "🚀 upstream-main has new commits not in main. Proceeding with rebase."
+          echo "skipped=false" >> "$GITHUB_OUTPUT"
+
+      - name: Create sync branch
+        id: branch
+        if: steps.check.outputs.skipped != 'true'
+        run: |
+          set -e
           git config user.name "lunan-org-bot"
           git config user.email "actions@users.noreply.github.com"
 
           ts=$(date -u +%Y%m%d-%H%M%S)
           SYNC_BRANCH="sync/rebase-${ts}"
-          echo "SYNC_BRANCH=sync/rebase-${ts}" >> $GITHUB_ENV
+          echo "SYNC_BRANCH=${SYNC_BRANCH}" >> $GITHUB_ENV
+          echo "sync_branch=${SYNC_BRANCH}" >> $GITHUB_OUTPUT
+
           git checkout -b "$SYNC_BRANCH"
 
       - name: Rebase onto upstream-main
-        id: rebase
+        if: steps.check.outputs.skipped != 'true'
         run: |
           set -e
           git rebase upstream-main --committer-date-is-author-date
 
       - name: Push sync branch
+        if: steps.check.outputs.skipped != 'true'
         run: |
+          set -e
           git push -u origin "${{ env.SYNC_BRANCH }}"
 
       - name: Open PR back to main
+        if: steps.check.outputs.skipped != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           branch: ${{ env.SYNC_BRANCH }}
@@ -57,7 +79,8 @@ jobs:
           labels: upstream-sync
 
   on_failure:
-    if: ${{ failure() }}
+    needs: rebase
+    if: ${{ needs.rebase.result == 'failure' }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
