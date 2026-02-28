@@ -26,6 +26,9 @@ jobs:
 
       - name: Create sync branch
         run: |
+          git config user.name "lunan-org-bot"
+          git config user.email "actions@users.noreply.github.com"
+          
           ts=$(date -u +%Y%m%d-%H%M%S)
           SYNC_BRANCH="sync/rebase-${ts}"
           echo "SYNC_BRANCH=sync/rebase-${ts}" >> $GITHUB_ENV
