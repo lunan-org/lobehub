@@ -1,0 +1,25 @@
+name: Upstream Sync (canary -> upstream-canary)
+
+on:
+  schedule:
+    - cron: "30 */6 * * *"  # 错开半小时
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync with upstream (canary)
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+        with:
+          upstream_repository: lobehub/lobehub
+          upstream_branch: canary
+          target_sync_branch: upstream-canary
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          create_issue: true
+          issue_title: "Upstream sync (canary) failed"
+          issue_labels: "upstream-sync"
