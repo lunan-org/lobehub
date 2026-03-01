@@ -248,6 +248,7 @@ export const useCategory = () => {
     mobile,
     showAiImage,
     showApiKeyManage,
+    showProvider,
     avatarUrl,
     username,
   ]);
