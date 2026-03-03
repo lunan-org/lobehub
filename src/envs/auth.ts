@@ -84,6 +84,10 @@ declare global {
       AUTH_ZITADEL_SECRET?: string;
       AUTH_ZITADEL_ISSUER?: string;
 
+      AUTH_LUNAN_OIDC_ID?: string;
+      AUTH_LUNAN_OIDC_ISSUER?: string;
+      AUTH_LUNAN_OIDC_SECRET?: string;
+
       // ===== JWKS Key ===== //
       /**
        * Generic JWKS key for signing/verifying JWTs.
@@ -185,6 +189,10 @@ export const getAuthConfig = () => {
       AUTH_ZITADEL_SECRET: z.string().optional(),
       AUTH_ZITADEL_ISSUER: z.string().optional(),
 
+      AUTH_LUNAN_ID: z.string().optional(),
+      AUTH_LUNAN_SECRET: z.string().optional(),
+      AUTH_LUNAN_ISSUER: z.string().optional(),
+
       LOGTO_WEBHOOK_SIGNING_KEY: z.string().optional(),
 
       // Casdoor
@@ -277,6 +285,10 @@ export const getAuthConfig = () => {
       AUTH_ZITADEL_ID: process.env.AUTH_ZITADEL_ID,
       AUTH_ZITADEL_SECRET: process.env.AUTH_ZITADEL_SECRET,
       AUTH_ZITADEL_ISSUER: process.env.AUTH_ZITADEL_ISSUER,
+
+      AUTH_LUNAN_ID: process.env.AUTH_LUNAN_ID,
+      AUTH_LUNAN_SECRET: process.env.AUTH_LUNAN_SECRET,
+      AUTH_LUNAN_ISSUER: process.env.AUTH_LUNAN_ISSUER,
 
       // LOGTO
       LOGTO_WEBHOOK_SIGNING_KEY: process.env.LOGTO_WEBHOOK_SIGNING_KEY,
