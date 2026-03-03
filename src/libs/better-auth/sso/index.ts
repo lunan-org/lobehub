@@ -19,10 +19,12 @@ import Github from './providers/github';
 import Google from './providers/google';
 import Keycloak from './providers/keycloak';
 import Logto from './providers/logto';
+import Lunan from './providers/lunan';
 import Microsoft from './providers/microsoft';
 import Okta from './providers/okta';
 import Wechat from './providers/wechat';
 import Zitadel from './providers/zitadel';
+
 
 const providerDefinitions = [
   Apple,
@@ -42,6 +44,7 @@ const providerDefinitions = [
   Zitadel,
   Feishu,
   Wechat,
+  Lunan,
 ] as const;
 
 const builtInProviderIds = new Set(BUILTIN_BETTER_AUTH_PROVIDERS);
@@ -114,6 +117,6 @@ export const initBetterAuthSSOProviders = () => {
 
   return {
     genericOAuthProviders,
-    socialProviders: socialProviders,
+    socialProviders,
   };
 };
