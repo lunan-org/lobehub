@@ -80,6 +80,7 @@ export default {
   'betterAuth.signin.continueWithOkta': 'Sign in with Okta',
   'betterAuth.signin.continueWithWechat': 'Sign in with WeChat',
   'betterAuth.signin.continueWithZitadel': 'Sign in with Zitadel',
+  'betterAuth.signin.continueWithLunan': 'Sign in with Lunan',
   'betterAuth.signin.emailPlaceholder': 'Enter your email or username',
   'betterAuth.signin.emailStep.title': 'Sign In',
   'betterAuth.signin.error': 'Sign in failed, please check your email and password',
